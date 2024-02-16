@@ -11,43 +11,42 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
     'The only way to go fast, is to go well.'
   ]
-  
+
   const emptyArray = Array(anecdotes.length).fill(0)
-  const randomSelectedIndex = randomIndex()
-  
-  const [points, setPoints] = useState(emptyArray)
-  const [selected, setSelected] = useState(randomSelectedIndex)
+
+  const [selected, setSelected] = useState(0)
+  const [mostVotes, setMostVotes] = useState(0)
+  const [votes, setVotes] = useState(emptyArray)
 
   function randomIndex() {
-    return (Math.floor(Math.random() * anecdotes.length))
-  }
-
-  function nextAnecdote() {
-    //setSelected((selected + 1) % anecdotes.length)
-    setSelected(randomIndex())
+    while (true) {
+      const next = Math.floor(Math.random() * anecdotes.length)
+      if (next !== selected) return next
+    }
   }
 
   function vote() {
-    const copy = [...points]
-    copy[selected] += 1
-    setPoints(copy)
-  }
+    const newVotes = [...votes]
+    newVotes[selected] += 1
+    setVotes(newVotes)
 
-  function indexOfMostVotedAnecdote() {
-    const max = Math.max(...points)
-    const index = points.indexOf(max)
-    return index
+    if (newVotes[selected] > votes[mostVotes]) {
+      setMostVotes(selected)
+    }
   }
 
   return (
     <div>
-      <h1>Anecdote of the day</h1>
+      <h2>Anecdote of the day</h2>
       <p>{anecdotes[selected]}</p>
-      <p>has {points[selected]} votes</p>
-      <button onClick={vote}>vote</button>
-      <button onClick={nextAnecdote}>next anecdote</button>
-      <h1>Anecdote with most votes</h1>
-      <p>{anecdotes[indexOfMostVotedAnecdote()]}</p>
+      <p>has {votes[selected]} votes</p>
+      <div>
+        <button onClick={vote}>vote</button>
+        <button onClick={() => setSelected(randomIndex())}>next anecdote</button>
+      </div>
+      <h2>Anecdote with most votes</h2>
+      <p>{anecdotes[mostVotes]}</p>
+      <p>has {votes[mostVotes]}</p>
     </div>
   )
 }
