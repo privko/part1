@@ -1,19 +1,27 @@
 import { useState } from 'react'
 
-const StatisticLine = (props) => {
+const StatisticLine = ({ text, value }) => {
   return (
     <tr className="StatiscticLine">
-      <td>{props.text}</td>
-      <td>{props.value}</td>
+      <td>{text}</td>
+      <td>{value}</td>
     </tr>
   )
 }
 
-const Statistics = (props) => {
+const Statistics = ({ good, neutral, bad }) => {
 
-  const sum = props.good + props.neutral + props.bad
-  const average = (props.good * 1 + props.neutral * 0 + props.bad * -1) / sum
-  const positive = `${props.good / sum * 100} %`
+  const total = good + neutral + bad
+
+  if (total === 0) {
+    return (
+      <div className="Statistics">
+        <h2>statistics</h2>
+        <p>No feedback given</p>
+      </div>
+    )
+  }
+
 
   return (
     <div className="Statisctics">
@@ -21,12 +29,12 @@ const Statistics = (props) => {
       <table>
         <thead></thead>
         <tbody>
-          <StatisticLine text="good" value={props.good} />
-          <StatisticLine text="neutral" value={props.neutral} />
-          <StatisticLine text="bad" value={props.bad} />
-          <StatisticLine text="all" value={sum} />
-          <StatisticLine text="average" value={average} />
-          <StatisticLine text="positive" value={positive} />
+          <StatisticLine text="good" value={good} />
+          <StatisticLine text="neutral" value={neutral} />
+          <StatisticLine text="bad" value={bad} />
+          <StatisticLine text="all" value={total} />
+          <StatisticLine text="average" value={(good - bad) / total} />
+          <StatisticLine text="positive" value={(100 * good) / total + '%'} />
         </tbody>
       </table>
     </div>
@@ -37,31 +45,16 @@ const App = () => {
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
-  const [infoGathered, setInfoGathered] = useState(false)
-
-
-  function incrementGood() {
-    setInfoGathered(true)
-    setGood(good + 1)
-  }
-
-  function incrementNeutral() {
-    setInfoGathered(true)
-    setNeutral(neutral + 1)
-  }
-
-  function incrementBad() {
-    setInfoGathered(true)
-    setBad(bad + 1)
-  }
 
   return (
     <div>
       <h1>give feedback</h1>
-      <button onClick={incrementGood}>good</button>
-      <button onClick={incrementNeutral}>neutral</button>
-      <button onClick={incrementBad}>bad</button>
-      {infoGathered ? <Statistics good={good} neutral={neutral} bad={bad} /> : <p>No feedback given</p>}
+      <div>
+        <button onClick={() => setGood(good + 1)}>good</button>
+        <button onClick={() => setNeutral(neutral + 1)}>neutral</button>
+        <button onClick={() => setBad(bad + 1)}>bad</button>
+      </div>
+      <Statistics good={good} neutral={neutral} bad={bad} /> 
     </div>
   )
 }
